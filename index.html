@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo de Videos</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="brand">
+        <div class="logo">V</div>
+        <div>
+          <h1>Lista de URLs</h1>
+          <div class="subtitle">Videos estilo Netflix · sin login</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <form id="addForm" class="search-row">
+          <input id="urlInput" type="url" placeholder="Agrega videos de YouTube, Vimeo, ThisVid, MP4 o cualquier enlace" required />
+          <button class="primary" type="submit">Agregar</button>
+        </form>
+
+        <input id="searchInput" type="text" placeholder="Buscar por título o URL" />
+        <select id="platformFilter">
+          <option value="all">Todas las plataformas</option>
+          <option value="favorites">Solo favoritos</option>
+          <option value="YouTube">YouTube</option>
+          <option value="Vimeo">Vimeo</option>
+          <option value="ThisVid">ThisVid</option>
+          <option value="Archivo directo">Archivo directo</option>
+          <option value="Otro">Otro</option>
+        </select>
+        <select id="sortSelect">
+          <option value="newest">Más recientes</option>
+          <option value="oldest">Más antiguos</option>
+          <option value="title">Título A-Z</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div id="errorBox" class="error" style="display:none;"></div>
+
+    <section class="stats" id="stats"></section>
+
+    <section id="editPanel" class="edit-panel">
+      <div class="section-title">
+        <h2>Editar video</h2>
+        <span class="muted">Actualiza título o enlace.</span>
+      </div>
+      <div class="edit-grid">
+        <input id="editTitle" type="text" placeholder="Título" />
+        <input id="editUrl" type="url" placeholder="URL" />
+        <button id="saveEditBtn" class="primary" type="button">Guardar cambios</button>
+        <button id="cancelEditBtn" class="secondary" type="button">Cancelar</button>
+      </div>
+    </section>
+
+    <section class="section-title">
+      <h2 id="sectionHeading">Catálogo</h2>
+      <span class="muted" id="countLabel"></span>
+    </section>
+
+    <section id="grid" class="grid"></section>
+    <nav id="pagination" class="pagination"></nav>
+  </main>
+
+  <div id="playerModal" class="modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong id="modalTitle">Reproductor</strong>
+        <button id="closeModalBtn" class="secondary" type="button">Cerrar</button>
+      </div>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
