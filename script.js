@@ -558,6 +558,122 @@ document.getElementById("platformFilter").addEventListener("change", (e) => {
   render();
 });
 
+// MP4 Upload functionality
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const uploadProgress = document.getElementById('uploadProgress');
+
+// Drag and drop events
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.classList.add('dragover');
+});
+
+dropZone.addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+});
+
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    handleFileUpload(files[0]);
+  }
+});
+
+dropZone.addEventListener('click', () => {
+  fileInput.click();
+});
+
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files.length > 0) {
+    handleFileUpload(e.target.files[0]);
+  }
+});
+
+function createLocalVideoThumbnail(fileName) {
+  const safeTitle = fileName || "Video Local";
+  const encodedTitle = encodeURIComponent(safeTitle);
+  
+  return `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' 
+  width='480' height='270' viewBox='0 0 480 270'><defs><linearGradient 
+  id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%23111827'/>
+  <stop offset='100%' stop-color='%231f2937'/></linearGradient><linearGradient 
+  id='greenGrad' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%2346d369'/>
+  <stop offset='100%' stop-color='%2327c24f'/></linearGradient><filter id='softGlow' 
+  x='-30%' y='-30%' width='160%' height='160%'><feGaussianBlur stdDeviation='6' result='blur'/><feMerge>
+  <feMergeNode in='blur'/><feMergeNode in='SourceGraphic'/></feMerge></filter><filter id='shadow' x='-30%' y='-30%' width='160%' height='160%'><feDropShadow dx='0' dy='5' stdDeviation='6' flood-color='%23000000' flood-opacity='0.45'/></filter></defs><rect width='480' height='270' fill='url(%23bg)'/><g opacity='0.08'>
+  <circle cx='390' cy='40' r='1.3' fill='%23ffffff'/><circle cx='420' cy='85' r='1.8' fill='%23ffffff'/><circle cx='60' cy='210' r='1.2' fill='%23ffffff'/><circle cx='310' cy='220' r='1.4' fill='%23ffffff'/></g><g filter='url(%23shadow)'><circle cx='240' cy='120' r='45' fill='url(%23greenGrad)' opacity='0.9'/><polygon points='225,105 225,135 255,120' fill='%23ffffff'/></g><text x='240' y='190' font-family='Arial, sans-serif' font-size='20' font-weight='600' fill='%23e5e7eb' text-anchor='middle'>${encodedTitle}</text><rect x='18' y='18' width='110' height='28' rx='8' fill='%2346d36920' stroke='%2346d36940'/>
+  <text x='73' y='37' font-family='Arial, sans-serif' font-size='12' text-anchor='middle' fill='%2346d369'>ARCHIVO LOCAL</text></svg>`;
+}
+
+function handleFileUpload(file) {
+  // Validate file type
+  if (file.type !== 'video/mp4') {
+    Swal.fire({
+      icon: 'error',
+      title: 'Tipo de archivo no válido',
+      text: 'Por favor, selecciona un archivo MP4.',
+    });
+    return;
+  }
+
+  // Show progress
+  uploadProgress.style.display = 'block';
+  const progressFill = uploadProgress.querySelector('.progress-fill');
+  const progressText = uploadProgress.querySelector('.progress-text');
+  
+  // Simulate progress
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += 10;
+    progressFill.style.width = progress + '%';
+    progressText.textContent = `Procesando video... ${progress}%`;
+    
+    if (progress >= 100) {
+      clearInterval(interval);
+      
+      // Create object URL for the video
+      const videoUrl = URL.createObjectURL(file);
+      const fileName = file.name.replace('.mp4', '');
+      
+      // Add to catalog
+      const newItem = {
+        id: Date.now().toString(),
+        platform: "Archivo local",
+        title: fileName,
+        url: videoUrl,
+        thumbnail: createLocalVideoThumbnail(fileName),
+        mode: "video",
+        playable: true,
+        embedUrl: videoUrl,
+        favorite: false,
+        added: new Date().toISOString()
+      };
+      
+      state.items.unshift(newItem);
+      saveItems();
+      render();
+      
+      // Reset upload UI
+      setTimeout(() => {
+        uploadProgress.style.display = 'none';
+        progressFill.style.width = '0%';
+        progressText.textContent = 'Procesando video...';
+        
+        Swal.fire({
+          icon: 'success',
+          title: '¡Video agregado!',
+          text: `"${fileName}" se ha agregado a tu catálogo.`,
+        });
+      }, 500);
+    }
+  }, 200);
+}
+
 document.getElementById("sortSelect").addEventListener("change", (e) => {
   state.sort = e.target.value;
   render();
