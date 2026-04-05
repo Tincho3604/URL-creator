@@ -125,7 +125,7 @@ function getThisVidMetadata(url) {
     thumbnail: createThisVidThumbnail(title),
     mode: "link",
     playable: false,
-    embedUrl: ""
+    embedUrl: url
   };
 }
 
@@ -391,13 +391,18 @@ function openPlayer(id) {
           <h3 style="color: #fff; margin-bottom: 12px;">${escapeHtml(item.title)}</h3>
           <p style="color: #b3b3b3; margin-bottom: 20px;">
             ${item.platform === "ThisVid" 
-              ? "Este video de ThisVid requiere abrirse en una nueva pestaña para su reproducción."
+              ? "Este video de ThisVid requiere abrirse en una nueva pestaña para su reproducción.<br><strong>Recomendación:</strong> Usa una pestaña incógnito para mejor privacidad."
               : "Este enlace no admite reproducción embebida en la app."
             }
           </p>
           <a class="button primary" href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer" style="display: inline-flex; align-items: center; gap: 8px;">
             ${item.platform === "ThisVid" ? '🔞' : '🔗'} Abrir en nueva pestaña
           </a>
+          ${item.platform === "ThisVid" ? `
+            <div style="margin-top: 12px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; font-size: 12px;">
+              💡 <strong>Consejo:</strong> Haz clic derecho en "Abrir en nueva pestaña" y selecciona "Abrir en ventana incógnito"
+            </div>
+          ` : ''}
         </div>
       </div>
     `;
